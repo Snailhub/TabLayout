@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/home/alexluo/alex/projects/TabLayout/demo/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="/home/alexluo/alex/projects/TabLayout/demo/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_962ebd97852cbde47ff9a2365f1f3b655a518f9d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/alexluo/alex/projects/TabLayout/demo/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="a83e03743527f97045be2c2d172c366af12b954d">
+        <dex dex="/home/alexluo/alex/projects/TabLayout/demo/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_1f3b919c7527e4ba0e07a5a634673f6fc3db23c0/classes.dex" />
+    </item>
+
+</items>
