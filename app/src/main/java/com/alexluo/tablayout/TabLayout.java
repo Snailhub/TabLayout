@@ -73,7 +73,7 @@ public class TabLayout extends HorizontalScrollView {
     private static final int FIXED_WRAP_GUTTER_MIN = 16; //dps
     private static final int MOTION_NON_ADJACENT_OFFSET = 24;
 
-    private static final int ANIMATION_DURATION = 300;
+    private static final int ANIMATION_DURATION = 400;
 
     private static final Pools.Pool<Tab> sTabPool = new Pools.SynchronizedPool<>(16);
 
@@ -153,6 +153,20 @@ public class TabLayout extends HorizontalScrollView {
 
 
     /**
+     * Mode to show selected Indicator as an line at bottom or top of the selected {@link Tab}
+     *
+     */
+    public static final int INDICATOR_MODE_INDICATOR = 0;
+
+
+    /**
+     * Mode to show selected Indicator as background of the selected {@link Tab}
+     *
+     */
+    public static final int INDICATOR_MODE_BACKGROUND = 1;
+
+
+    /**
      * Callback interface invoked when a tab's selection state changes.
      */
     public interface OnTabSelectedListener {
@@ -209,6 +223,8 @@ public class TabLayout extends HorizontalScrollView {
 
     private int mIndicatorPosition;
 
+    private int mIndicatorMode;
+
     private boolean mShowTabIndicator;
 
     private OnTabSelectedListener mOnTabSelectedListener;
@@ -260,6 +276,8 @@ public class TabLayout extends HorizontalScrollView {
         mShowTabIndicator = a.getBoolean(R.styleable.TabLayout_showTabIndicator,true);
 
         mIndicatorPosition = a.getInt(R.styleable.TabLayout_tabIndicatorPosition,POSITION_BOTTOM);
+
+        mIndicatorMode = a.getInt(R.styleable.TabLayout_tabIndicatorMode,INDICATOR_MODE_INDICATOR);
 
         mTabStrip.setSelectedIndicatorColor(a.getColor(R.styleable.TabLayout_tabIndicatorColor, 0));
 
@@ -610,6 +628,29 @@ public class TabLayout extends HorizontalScrollView {
             applyModeAndGravity();
         }
     }
+
+
+    /**
+     * Set the mode to show indicator
+     * @param mode one of {@link #INDICATOR_MODE_BACKGROUND} or {@link #INDICATOR_MODE_INDICATOR}
+     */
+    public void setIndicatorMode(int mode){
+        if(mIndicatorMode != mode){
+            mIndicatorMode = mode;
+            updateAllTabs();
+        }
+    }
+
+
+    /**
+     * The current indicator mode
+     * @return one of {@link #INDICATOR_MODE_BACKGROUND} or {@link #INDICATOR_MODE_INDICATOR}
+     */
+    public int getIndicatorMode(){
+        return mIndicatorMode;
+    }
+
+
 
     /**
      * The current gravity used for laying out tabs.
@@ -1835,29 +1876,9 @@ public class TabLayout extends HorizontalScrollView {
             final int startLeft;
             final int startRight;
 
-            if (Math.abs(position - mSelectedPosition) <= 1) {
-                // If the views are adjacent, we'll animate from edge-to-edge
-                startLeft = mIndicatorLeft;
-                startRight = mIndicatorRight;
-            } else {
-                // Else, we'll just grow from the nearest edge
-                final int offset = dpToPx(MOTION_NON_ADJACENT_OFFSET);
-                if (position < mSelectedPosition) {
-                    // We're going end-to-start
-                    if (isRtl) {
-                        startLeft = startRight = targetLeft - offset;
-                    } else {
-                        startLeft = startRight = targetRight + offset;
-                    }
-                } else {
-                    // We're going start-to-end
-                    if (isRtl) {
-                        startLeft = startRight = targetRight + offset;
-                    } else {
-                        startLeft = startRight = targetLeft - offset;
-                    }
-                }
-            }
+            // We'll animate from edge-to-edge
+            startLeft = mIndicatorLeft;
+            startRight = mIndicatorRight;
 
             if (startLeft != targetLeft || startRight != targetRight) {
                 ValueAnimator animator = mIndicatorAnimator = createAnimator();
@@ -1906,27 +1927,34 @@ public class TabLayout extends HorizontalScrollView {
 
         @Override
         public void draw(Canvas canvas) {
-            super.draw(canvas);
-            if(!mShowTabIndicator){
-                return;
-            }
             // Thick colored underline below the current selection
-            if (mIndicatorLeft >= 0 && mIndicatorRight > mIndicatorLeft) {
-                int padding = (mSelectedIndicatorWidth == 0) ?
-                        0 : ((mIndicatorRight - mIndicatorLeft) - mSelectedIndicatorWidth) / 2;
-                padding = (padding > 0) ? padding : 0;
-                if(mIndicatorPosition == POSITION_BOTTOM) {
-                    canvas.drawRect(mIndicatorLeft + padding,
-                            getHeight() - mSelectedIndicatorHeight - mSelectedIndicatorMarginBottom,
-                            mIndicatorRight - padding,
-                            getHeight() - mSelectedIndicatorMarginBottom, mSelectedIndicatorPaint);
-                }else {
-                    canvas.drawRect(mIndicatorLeft + padding,
-                            mSelectedIndicatorMarginTop,
-                            mIndicatorRight - padding,
-                            mSelectedIndicatorHeight + mSelectedIndicatorMarginTop, mSelectedIndicatorPaint);
+            if(mShowTabIndicator){
+                if(mIndicatorLeft >= 0 && mIndicatorRight > mIndicatorLeft) {
+                    int padding = (mSelectedIndicatorWidth == 0) ?
+                            0 : ((mIndicatorRight - mIndicatorLeft) - mSelectedIndicatorWidth) / 2;
+                    padding = (padding > 0) ? padding : 0;
+                    if(mIndicatorMode == INDICATOR_MODE_BACKGROUND){
+                        canvas.drawRect(mIndicatorLeft/* + padding*/,
+                                0,
+                                mIndicatorRight/* - padding*/,
+                                getHeight(), mSelectedIndicatorPaint);
+                    }else {
+                        if (mIndicatorPosition == POSITION_BOTTOM) {
+                            canvas.drawRect(mIndicatorLeft + padding,
+                                    getHeight() - mSelectedIndicatorHeight - mSelectedIndicatorMarginBottom,
+                                    mIndicatorRight - padding,
+                                    getHeight() - mSelectedIndicatorMarginBottom, mSelectedIndicatorPaint);
+                        } else {
+                            canvas.drawRect(mIndicatorLeft + padding,
+                                    mSelectedIndicatorMarginTop,
+                                    mIndicatorRight - padding,
+                                    mSelectedIndicatorHeight + mSelectedIndicatorMarginTop, mSelectedIndicatorPaint);
+                        }
+                    }
                 }
+
             }
+            super.draw(canvas);
         }
     }
 

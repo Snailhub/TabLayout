@@ -14,6 +14,12 @@
             <enum name="bottom" value="0"/>
             <enum name="top" value="1"/>
         </attr>
+
+        <attr name="tabIndicatorMode">
+            <enum name="indicator" value="0"/>
+            <enum name="background" value="1"/>
+        </attr>
+
         <attr name="tabMode">
             <enum name="scrollable" value="0" />
             <enum name="fixed" value="1" />

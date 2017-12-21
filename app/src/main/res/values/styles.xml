@@ -16,6 +16,9 @@
     <style name="Widget.TabLayout" parent="TabLayoutStyle">
         <item name="tabGravity">fill</item>
         <item name="tabMode">fixed</item>
+        <item name="tabIndicatorMode">background</item>
+        <item name="tabBackground">@android:color/transparent</item>
+        <item name="tabSelectedTextColor">#ffffff</item>
     </style>
 
 
